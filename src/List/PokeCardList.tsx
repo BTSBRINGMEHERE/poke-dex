@@ -18,11 +18,11 @@ const PokeCardList = () => {
 		loading: false,
 		hasNextPage: pokemons.next !== "",
 		onLoadMore: async () => {
-			const morePokemos = await fetchPokemons(pokemons.next)
+			const morePokemons = await fetchPokemons(pokemons.next)
 
 			setPokemons({
-				...morePokemos,
-				results: [...pokemons.results, ...morePokemos.results],
+				...morePokemons,
+				results: [...pokemons.results, ...morePokemons.results],
 			})
 		},
 		disabled: false,
