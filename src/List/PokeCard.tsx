@@ -1,25 +1,61 @@
 import styled from "@emotion/styled"
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { PokeImageSkeleton } from "../Common/PokeImageSkeleton"
 import PokeMarkChip from "../Common/PokeMarkChip"
 import PokeNameChip from "../Common/PokeNameChip"
+import {
+	fetchPokemonDetail,
+	PokemonDetailType,
+} from "../Service/pokemonService"
 
-const TempImgUrl =
-	"https://mblogthumb-phinf.pstatic.net/20160817_259/retspe_14714118890125sC2j_PNG/%C7%C7%C4%AB%C3%F2_%281%29.png?type=w800"
+interface PokeCardProps {
+	name: string
+}
 
-const PokeCard = () => {
+const PokeCard = (props: PokeCardProps) => {
 	const navigate = useNavigate()
+	const [pokemon, setPokemon] = useState<PokemonDetailType | null>(null)
 
 	const handleClick = () => {
-		navigate(`/pokemon/피카츄`)
+		navigate(`/pokemon/${props.name}`)
 	}
+
+	useEffect(() => {
+		;(async () => {
+			const detail = await fetchPokemonDetail(props.name)
+			setPokemon(detail)
+		})()
+	}, [props.name])
+
+	if (!pokemon) {
+		return (
+			<Item color={"#fff"}>
+				<Header>
+					<PokeNameChip name={"포켓몬"} color={"#ffca09"} id={0} />
+				</Header>
+				<Body>
+					<PokeImageSkeleton />
+				</Body>
+				<Footer>
+					<PokeMarkChip />
+				</Footer>
+			</Item>
+		)
+		// 화면이 로딩중일때
+	}
+
 	return (
-		<Item onClick={handleClick}>
+		<Item onClick={handleClick} color={pokemon.color}>
 			<Header>
-				<PokeNameChip />
+				<PokeNameChip
+					name={pokemon.koreanName}
+					color={pokemon.color}
+					id={pokemon.id}
+				/>
 			</Header>
 			<Body>
-				<Image src={TempImgUrl} alt="이상해씨 이미지" />
+				<Image src={pokemon.images.dreamWorldFront} alt={pokemon.name} />
 			</Body>
 			<Footer>
 				<PokeMarkChip />
@@ -28,7 +64,7 @@ const PokeCard = () => {
 	)
 }
 
-const Item = styled.li`
+const Item = styled.li<{ color: string }>`
 	display: flex;
 	flex-direction: column;
 
@@ -48,7 +84,7 @@ const Item = styled.li`
 	}
 
 	&:active {
-		background-color: yellow;
+		background-color: ${(props) => props.color};
 		opacity: 0.8;
 		transition: background-color 0s;
 	}
