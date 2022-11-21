@@ -63,7 +63,7 @@ export interface PokemonDetailType {
 	images: {
 		frontDefault: string
 		dreamWorldFront: string
-		officialArtwork: string
+		officialArtworkFront: string
 	}
 	baseStats: {
 		name: string
@@ -71,7 +71,7 @@ export interface PokemonDetailType {
 	}[]
 }
 
-export const fetchPokemons = async (nextUrl?: string) => {
+export const fetchPokemonsAPI = async (nextUrl?: string) => {
 	const requestURL = nextUrl ? nextUrl : "https://pokeapi.co/api/v2/pokemon/"
 
 	const response = await remote.get<PokemonListResponseType>(requestURL)
@@ -79,7 +79,7 @@ export const fetchPokemons = async (nextUrl?: string) => {
 	return response.data
 }
 
-export const fetchPokemonDetail = async (
+export const fetchPokemonDetailAPI = async (
 	name: string
 ): Promise<PokemonDetailType> => {
 	const pokemonDetailUrl = `https://pokeapi.co/api/v2/pokemon/${name}`
@@ -107,7 +107,8 @@ export const fetchPokemonDetail = async (
 		images: {
 			frontDefault: detail.sprites.front_default,
 			dreamWorldFront: detail.sprites.other.dream_world.front_default,
-			officialArtwork: detail.sprites.other["official-artwork"].front_default,
+			officialArtworkFront:
+				detail.sprites.other["official-artwork"].front_default,
 		},
 		baseStats: detail.stats.map((item) => {
 			return {
